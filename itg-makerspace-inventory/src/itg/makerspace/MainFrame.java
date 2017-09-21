@@ -111,7 +111,7 @@ public class MainFrame extends JFrame {
 					}
 					
 					if(!hasItem) {
-						Object[] newRow = new Object[] {item.name, 1};
+						Object[] newRow = new Object[] {item.name, 1, item.id};
 						newLoanPanel.tableContent.addRow(newRow);
 					}
 					newLoanPanel.updateTable();
@@ -149,7 +149,7 @@ public class MainFrame extends JFrame {
 					JSONObject item = new JSONObject();
 					item.put("item", newLoanPanel.tableContent.getValueAt(i, 0));
 					item.put("quantity", newLoanPanel.tableContent.getValueAt(i, 1));
-					
+					item.put("item_id", newLoanPanel.tableContent.getValueAt(i, 2));
 					items.put(item);
 				}
 				
@@ -188,7 +188,7 @@ public class MainFrame extends JFrame {
 			}
 			
 			if(!hasItem) {
-				Object[] newRow = new Object[] {item.name, 1};
+				Object[] newRow = new Object[] {item.name, 1, item.id};
 				newLoanPanel.tableContent.addRow(newRow);
 			}
 			newLoanPanel.updateTable();

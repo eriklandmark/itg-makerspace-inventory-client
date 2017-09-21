@@ -42,6 +42,7 @@ public class NewLoanPanel extends JPanel {
 		table = new JTable(tableContent);
 		table.getColumnModel().getColumn(1).setMaxWidth(120);
 		tablePane = new JScrollPane(table);
+		table.removeColumn(table.getColumnModel().getColumn(2));
 
 		btnCancel = new Button("Avbryt");
 
