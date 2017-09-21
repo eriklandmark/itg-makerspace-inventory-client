@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JLabel;
+import java.awt.Font;
 
 public class ActionPanel extends JPanel {
 
@@ -19,6 +20,7 @@ public class ActionPanel extends JPanel {
 	public JButton btnLogOut;
 	public JButton btnNewLoan;
 	public JButton btnShowLoans;
+	private JLabel greetingLabel;
 
 	public ActionPanel() {
 		setBackground(Color.WHITE);
@@ -29,7 +31,8 @@ public class ActionPanel extends JPanel {
 		gridBagLayout.columnWeights = new double[]{0.0};
 		setLayout(gridBagLayout);
 		
-		JLabel greetingLabel = new JLabel("Hej!");
+		greetingLabel = new JLabel();
+		greetingLabel.setFont(new Font("Open Sans", Font.PLAIN, 18));
 		GridBagConstraints gbc_greetingLabel = new GridBagConstraints();
 		gbc_greetingLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_greetingLabel.gridx = 0;
@@ -60,5 +63,8 @@ public class ActionPanel extends JPanel {
 		add(btnLogOut, gbc_btnLogOut);
 
 	}
-
+	
+	public void setGreetingText(String text) {
+		greetingLabel.setText(text);
+	}
 }

@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import itg.makerspace.authentication.AuthenticationManager;
+import itg.makerspace.dialogs.InformationDialog;
 import itg.makerspace.inventory.Inventory;
 import itg.makerspace.inventory.InventoryItem;
 
@@ -25,6 +26,7 @@ public class MainFrame extends JFrame {
 	public Scanner scanner;
 	public Inventory inventory = new Inventory();
 	public AuthenticationManager authManager = new AuthenticationManager();
+	public MainFrame instance = this;
 	
 	String[] columnNames = {"First Name",
             "Last Name",
@@ -58,6 +60,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(loadUser(loginPanel.emailField.getText(), String.valueOf(loginPanel.passwordField.getPassword()))) {
+					actionPanel.setGreetingText("Välkommen " + currentUser.fullName + "!");
 					setContentPane(actionPanel);
 					revalidate();
 					validate();
@@ -111,9 +114,10 @@ public class MainFrame extends JFrame {
 					}
 					
 					if(!hasItem) {
-						Object[] newRow = new Object[] {item.name, 1, item.id};
+						Object[] newRow = new Object[] {item.name, 1, "", item.id};
 						newLoanPanel.tableContent.addRow(newRow);
 					}
+					
 					newLoanPanel.updateTable();
 					newLoanPanel.textBarcodeInput.setText("");
 				}
@@ -149,13 +153,22 @@ public class MainFrame extends JFrame {
 					JSONObject item = new JSONObject();
 					item.put("item", newLoanPanel.tableContent.getValueAt(i, 0));
 					item.put("quantity", newLoanPanel.tableContent.getValueAt(i, 1));
-					item.put("item_id", newLoanPanel.tableContent.getValueAt(i, 2));
+					item.put("item_id", newLoanPanel.tableContent.getValueAt(i, 3));
 					items.put(item);
 				}
 				
 				System.out.println(items.toString());
 				if(authManager.sendNewLoan(currentUser.user_id, currentUser.security_key, items.toString())) {
-					System.out.println("Works");
+					InformationDialog dialog = new InformationDialog();
+					dialog.open("Lån successfull!");
+					setContentPane(actionPanel);
+					revalidate();
+					validate();
+					repaint();
+					int rowCount = newLoanPanel.tableContent.getRowCount();
+					for (int i = rowCount - 1; i >= 0; i--) {
+						newLoanPanel.tableContent.removeRow(i);
+					}
 				}
 			}
 		});
@@ -188,9 +201,14 @@ public class MainFrame extends JFrame {
 			}
 			
 			if(!hasItem) {
-				Object[] newRow = new Object[] {item.name, 1, item.id};
+				Object[] newRow = new Object[] {item.name, 1, "", item.id};
 				newLoanPanel.tableContent.addRow(newRow);
 			}
+			
+			if(newLoanPanel.textBarcodeInput.getText().contains(barcode)) {
+				newLoanPanel.textBarcodeInput.setText(newLoanPanel.textBarcodeInput.getText().replaceAll(barcode, ""));
+			}
+			
 			newLoanPanel.updateTable();
 		}
 	}

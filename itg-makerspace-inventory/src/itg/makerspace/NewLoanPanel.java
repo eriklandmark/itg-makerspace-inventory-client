@@ -1,8 +1,10 @@
 package itg.makerspace;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -10,18 +12,21 @@ import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import itg.makerspace.frameelements.Button;
+import itg.makerspace.frameelements.TableButton;
 
 import javax.swing.JTextPane;
 
 public class NewLoanPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private JTable table;
+	public JTable table;
 	private JScrollPane tablePane;
 	public JLabel lblTitle;
 	public JButton btnCancel;
@@ -41,14 +46,52 @@ public class NewLoanPanel extends JPanel {
 
 		table = new JTable(tableContent);
 		table.getColumnModel().getColumn(1).setMaxWidth(120);
+		table.setBackground(Color.WHITE);
+		table.setOpaque(false);
+		table.getTableHeader().setBackground(Color.WHITE);
 		tablePane = new JScrollPane(table);
-		table.removeColumn(table.getColumnModel().getColumn(2));
-
+		table.setShowGrid(false);
+		tablePane.setBackground(Color.WHITE);
+		table.removeColumn(table.getColumnModel().getColumn(3));
+		tablePane.getViewport().setBackground(Color.WHITE);
+		tablePane.setViewportBorder(null);
+		tablePane.setBorder(BorderFactory.createEmptyBorder());
+		table.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+		table.getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
+		table.setFont(new Font("Open Sans", Font.PLAIN, 14));
+		table.getTableHeader().setFont(new Font("Open Sans", Font.PLAIN, 16));
+		table.setRowHeight (2 * table.getRowHeight (2));
+		table.setRowMargin(10);
+		
+		TableButton buttonEditor = new TableButton("Ta Bort");
+		
+		table.getColumnModel().getColumn(2).setMaxWidth(100);
+		table.getColumnModel().getColumn(2).setWidth(100);
+		table.getColumnModel().getColumn(2).setMinWidth(100);
+		table.getColumnModel().getColumn(2).setCellEditor(buttonEditor);
+		table.getColumnModel().getColumn(2).setCellRenderer(buttonEditor);
+		table.getColumnModel().getColumn(2).setModelIndex(2);
+		
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				super.mousePressed(e);
+				
+				int row = table.rowAtPoint(e.getPoint());
+				int col = table.columnAtPoint(e.getPoint());
+				if (row >= 0 && col == 2) {
+					tableContent.removeRow(row);
+					updateTable();
+				}
+			}
+		});
+		
 		btnCancel = new Button("Avbryt");
 
 		JTextPane txtInfo = new JTextPane();
-		txtInfo.setText(
-				"F\u00F6r att g\u00F6ra ett nytt l\u00E5n, skannar du en produkt med den svarta scannern och produktern kommer att dyka upp i listan n\u00E4r du \u00E4r klar. Du kan \u00E4ven skriva in numret manuellt nedan.");
+		txtInfo.setText("F\u00F6r att g\u00F6ra ett nytt l\u00E5n, skannar du en produkt med den svarta scannern och produktern kommer att dyka upp i listan n\u00E4r du \u00E4r klar. Du kan \u00E4ven skriva in numret manuellt nedan.");
 		txtInfo.setEditable(false);
 
 		textBarcodeInput = new JTextField(13);
