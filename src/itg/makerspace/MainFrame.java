@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import itg.makerspace.authentication.AuthenticationManager;
+import itg.makerspace.authentication.GetAllLoansThread;
 import itg.makerspace.dialogs.InformationDialog;
 import itg.makerspace.inventory.Inventory;
 import itg.makerspace.inventory.InventoryItem;
@@ -64,7 +65,7 @@ public class MainFrame extends JFrame {
 		loginPanel = new LoginPanel(this);
 		actionPanel = new ActionPanel();
 		newLoanPanel = new NewLoanPanel(this);
-		myLoansPanel = new MyLoansPanel();
+		myLoansPanel = new MyLoansPanel(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1200, 600);
 		setLocationRelativeTo(null);
@@ -102,10 +103,13 @@ public class MainFrame extends JFrame {
 		actionPanel.btnShowLoans.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setContentPane(myLoansPanel);
-				revalidate();
-				validate();
-				repaint();
+				actionPanel.btnShowLoans.setEnabled(false);
+				int rowCount = myLoansPanel.tableContent.getRowCount();
+				for (int i = rowCount - 1; i >= 0; i--) {
+					myLoansPanel.tableContent.removeRow(i);
+				}
+				GetAllLoansThread getAllLoansThread = new GetAllLoansThread(instance, currentUser.user_id, currentUser.security_key);
+				getAllLoansThread.start();
 			}
 		});
 		newLoanPanel.btnCancel.addActionListener(new ActionListener() {
@@ -219,6 +223,16 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		
+		myLoansPanel.btnCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setContentPane(actionPanel);
+				revalidate();
+				validate();
+				repaint();
+			}
+		});
 	}
 	
 	public void loginSuccessfull(String response) {
@@ -257,6 +271,29 @@ public class MainFrame extends JFrame {
 	public void newLoanFail() {
 		newLoanPanel.lblLoadingIcon.setVisible(false);
 		newLoanPanel.btnNewLoan.setEnabled(true);
+	}
+	
+	public void getAllLoansSuccessfully(String response) {
+		JSONObject json = new JSONObject(response);
+		JSONArray items = json.getJSONArray("items");
+		
+		for (int i = 0; i < items.length(); i++) {
+			JSONObject loan = items.getJSONObject(i);
+			int id = loan.getInt("item_id");
+			Object[] obj = new Object[] {inventory.getItemFromID(id).name, loan.getInt("quantity"), "", id, loan.getInt("loan_id")};
+			myLoansPanel.tableContent.addRow(obj);
+		}
+		
+		myLoansPanel.updateTable();
+		setContentPane(myLoansPanel);
+		revalidate();
+		validate();
+		repaint();
+		actionPanel.btnShowLoans.setEnabled(true);
+	}
+	
+	public void getAllLoansFails() {
+		actionPanel.btnShowLoans.setEnabled(true);
 	}
 
 	public void barcodeScannedEvent(String barcode) {

@@ -9,30 +9,32 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.json.JSONObject;
-
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
 
-public class LoginThread extends Thread {
+public class ReturnItemThread extends Thread {
 	
+	int item_id;
+	int quantity;
+	int loan_id;
 	MainFrame mainFrame;
-	String email = "";
-	String password = "";
+	int d_row;
 	
-	public LoginThread(MainFrame main, String em, String pw) {
+	public ReturnItemThread(MainFrame main, int l_id, int id, int qu, int row) {
+		item_id = id;
+		quantity = qu;
+		loan_id = l_id;
 		mainFrame = main;
-		email = em;
-		password = pw;
+		d_row = row;
 	}
-
+	
 	public void run() {
 		try {
 			//String httpsURL = "https://itg-makerspace.herokuapp.com/auth";
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/auth";
+			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/remove-loan-item";
 			System.out.println(httpsURL);
-			String query = "email=" + URLEncoder.encode(email,"UTF-8") + "&" + "password=" + URLEncoder.encode(password,"UTF-8");
+			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8") + "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
 			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
@@ -51,35 +53,30 @@ public class LoginThread extends Thread {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
 				String answer = in.readLine();
 				in.close();
-				JSONObject obj = new JSONObject(answer);
-				String status = obj.getString("status");
-				if(status.equalsIgnoreCase("true")) {
-					mainFrame.loginSuccessfull(answer);
+				if(answer.equalsIgnoreCase("true")) {
+					System.out.println(answer);
+					mainFrame.myLoansPanel.tableContent.removeRow(d_row);
+					mainFrame.myLoansPanel.updateTable();
 				} else {
 					InformationDialog dialog = new InformationDialog();
-					dialog.open(obj.getString("status_msg"));
-					mainFrame.loginFailed();
+					dialog.open("Error with request!");
 				}
 			} else {
 				ErrorDialog dialog = new ErrorDialog();
 				dialog.open("Oops! Ett fel uppstod. Felkod: " + con.getResponseCode() + "\n" + "(" + con.getResponseMessage() + ")");
-				mainFrame.loginFailed();
 			}
 		} catch (ConnectException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n404: Not Found.");
-			mainFrame.loginFailed();
 		} catch (SocketTimeoutException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n408: Timeout.");
-			mainFrame.loginFailed();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Fel uppstod:\n" + e.getLocalizedMessage());
-			mainFrame.loginFailed();
 		}
     }
 }

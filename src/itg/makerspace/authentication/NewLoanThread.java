@@ -15,7 +15,6 @@ import itg.makerspace.dialogs.InformationDialog;
 public class NewLoanThread extends Thread {
 	
 	MainFrame mainFrame;
-	String ip_adress = "192.168.193.113:9292";
 	int user_id = 0;
 	String auth_key = "";
 	String items = "";
@@ -30,7 +29,7 @@ public class NewLoanThread extends Thread {
 	public void run() {
 		try {
 			//String httpsURL = "https://itg-makerspace.herokuapp.com/new-loan";
-			String httpsURL = "http://" + ip_adress + "/new-loan";
+			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/new-loan";
 			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id), "UTF-8") + "&security_key=" + URLEncoder.encode(auth_key,"UTF-8") + "&items=" + URLEncoder.encode(items,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);

@@ -73,4 +73,16 @@ public class Inventory {
 		dialog.open("Hittade inget med sträckkoden: " + barcode);
 		return null;
 	}
+	
+	public InventoryItem getItemFromID(int id) {
+		for(int i = 0; i < inventory.size(); i++) {
+			InventoryItem item = inventory.get(i);
+			if (item.id == id) {
+				return item;
+			}
+		}
+		InformationDialog dialog = new InformationDialog();
+		dialog.open("Hittade inget med id: " + id);
+		return null;
+	}
 }

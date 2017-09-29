@@ -55,11 +55,11 @@ public class NewLoanPanel extends JPanel {
 		btnNewLoan = new Button("Spara");
 		
 		table = new JTable(tableContent);
+		tablePane = new JScrollPane(table);
 		table.getColumnModel().getColumn(1).setMaxWidth(120);
 		table.setBackground(Color.WHITE);
 		table.setOpaque(false);
 		table.getTableHeader().setBackground(Color.WHITE);
-		tablePane = new JScrollPane(table);
 		table.setShowGrid(false);
 		tablePane.setBackground(Color.WHITE);
 		table.removeColumn(table.getColumnModel().getColumn(3));

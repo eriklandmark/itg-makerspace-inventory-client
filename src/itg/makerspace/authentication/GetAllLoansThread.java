@@ -15,25 +15,24 @@ import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
 
-public class LoginThread extends Thread {
+public class GetAllLoansThread extends Thread {
 	
 	MainFrame mainFrame;
-	String email = "";
-	String password = "";
+	int user_id;
+	String security_key;
 	
-	public LoginThread(MainFrame main, String em, String pw) {
-		mainFrame = main;
-		email = em;
-		password = pw;
+	public GetAllLoansThread(MainFrame m, int id, String sec_key) {
+		mainFrame = m;
+		user_id = id;
+		security_key = sec_key;
 	}
-
+	
 	public void run() {
 		try {
-			//String httpsURL = "https://itg-makerspace.herokuapp.com/auth";
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/auth";
+			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/get-all-user-loans";
 			System.out.println(httpsURL);
-			String query = "email=" + URLEncoder.encode(email,"UTF-8") + "&" + "password=" + URLEncoder.encode(password,"UTF-8");
-	
+			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&" + "security_key=" + URLEncoder.encode(security_key,"UTF-8");
+			
 			URL myurl = new URL(httpsURL);
 			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
@@ -54,32 +53,33 @@ public class LoginThread extends Thread {
 				JSONObject obj = new JSONObject(answer);
 				String status = obj.getString("status");
 				if(status.equalsIgnoreCase("true")) {
-					mainFrame.loginSuccessfull(answer);
+					System.out.println(answer);
+					mainFrame.getAllLoansSuccessfully(answer);
 				} else {
 					InformationDialog dialog = new InformationDialog();
 					dialog.open(obj.getString("status_msg"));
-					mainFrame.loginFailed();
+					mainFrame.getAllLoansFails();
 				}
 			} else {
 				ErrorDialog dialog = new ErrorDialog();
 				dialog.open("Oops! Ett fel uppstod. Felkod: " + con.getResponseCode() + "\n" + "(" + con.getResponseMessage() + ")");
-				mainFrame.loginFailed();
+				mainFrame.getAllLoansFails();
 			}
 		} catch (ConnectException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n404: Not Found.");
-			mainFrame.loginFailed();
+			mainFrame.getAllLoansFails();
 		} catch (SocketTimeoutException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n408: Timeout.");
-			mainFrame.loginFailed();
+			mainFrame.getAllLoansFails();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
-			dialog.open("Fel uppstod:\n" + e.getLocalizedMessage());
-			mainFrame.loginFailed();
+			dialog.open(e.getLocalizedMessage());
+			mainFrame.getAllLoansFails();
 		}
     }
 }
