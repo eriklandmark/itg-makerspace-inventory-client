@@ -1,4 +1,4 @@
-package itg.makerspace;
+package itg.makerspace.panels;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,8 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
-import itg.makerspace.frameelements.Button;
-import itg.makerspace.frameelements.TextField;
+import itg.makerspace.MainFrame;
+import itg.makerspace.panelelements.Button;
+import itg.makerspace.panelelements.TextField;
 
 public class LoginPanel extends JPanel {
 	

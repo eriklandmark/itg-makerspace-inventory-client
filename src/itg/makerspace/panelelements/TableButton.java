@@ -1,4 +1,4 @@
-package itg.makerspace.frameelements;
+package itg.makerspace.panelelements;
 
 import java.awt.Component;
 import java.util.EventObject;

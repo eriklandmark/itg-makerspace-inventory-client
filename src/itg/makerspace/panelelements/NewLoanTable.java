@@ -1,4 +1,4 @@
-package itg.makerspace;
+package itg.makerspace.panelelements;
 
 import javax.swing.table.DefaultTableModel;
 

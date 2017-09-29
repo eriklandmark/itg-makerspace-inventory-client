@@ -1,4 +1,4 @@
-package itg.makerspace;
+package itg.makerspace.panels;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -22,9 +22,11 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import itg.makerspace.frameelements.Button;
-import itg.makerspace.frameelements.TableButton;
-import itg.makerspace.frameelements.TextField;
+import itg.makerspace.MainFrame;
+import itg.makerspace.panelelements.Button;
+import itg.makerspace.panelelements.NewLoanTable;
+import itg.makerspace.panelelements.TableButton;
+import itg.makerspace.panelelements.TextField;
 
 import javax.swing.JTextPane;
 

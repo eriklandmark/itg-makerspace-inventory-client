@@ -1,4 +1,4 @@
-package itg.makerspace.frameelements;
+package itg.makerspace.panelelements;
 
 import java.awt.Color;
 import java.awt.Font;

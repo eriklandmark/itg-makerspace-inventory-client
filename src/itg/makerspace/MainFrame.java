@@ -17,6 +17,10 @@ import itg.makerspace.dialogs.InformationDialog;
 import itg.makerspace.inventory.Inventory;
 import itg.makerspace.inventory.InventoryItem;
 import itg.makerspace.log.Logger;
+import itg.makerspace.panels.ActionPanel;
+import itg.makerspace.panels.LoginPanel;
+import itg.makerspace.panels.MyLoansPanel;
+import itg.makerspace.panels.NewLoanPanel;
 
 public class MainFrame extends JFrame {
 
@@ -26,6 +30,7 @@ public class MainFrame extends JFrame {
 	public LoginPanel loginPanel;
 	public ActionPanel actionPanel;
 	public NewLoanPanel newLoanPanel;
+	public MyLoansPanel myLoansPanel;
 	public Scanner scanner;
 	public Inventory inventory = new Inventory();
 	public Logger logger;
@@ -59,6 +64,7 @@ public class MainFrame extends JFrame {
 		loginPanel = new LoginPanel(this);
 		actionPanel = new ActionPanel();
 		newLoanPanel = new NewLoanPanel(this);
+		myLoansPanel = new MyLoansPanel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1200, 600);
 		setLocationRelativeTo(null);
@@ -88,6 +94,15 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setContentPane(newLoanPanel);
+				revalidate();
+				validate();
+				repaint();
+			}
+		});
+		actionPanel.btnShowLoans.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setContentPane(myLoansPanel);
 				revalidate();
 				validate();
 				repaint();

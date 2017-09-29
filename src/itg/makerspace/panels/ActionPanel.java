@@ -1,8 +1,8 @@
-package itg.makerspace;
+package itg.makerspace.panels;
 
 import javax.swing.JPanel;
 
-import itg.makerspace.frameelements.Button;
+import itg.makerspace.panelelements.Button;
 
 import java.awt.GridBagLayout;
 import javax.swing.JButton;

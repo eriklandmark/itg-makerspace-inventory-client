@@ -12,11 +12,12 @@ import java.net.URLEncoder;
 import org.json.JSONObject;
 
 import itg.makerspace.MainFrame;
+import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
 
 public class LoginThread extends Thread {
 	
-	String ip_adress = "192.168.1.216:9292";
+	String ip_adress = "192.168.193.113:9292";
 	MainFrame mainFrame;
 	String email = "";
 	String password = "";
@@ -31,6 +32,7 @@ public class LoginThread extends Thread {
 		try {
 			//String httpsURL = "https://itg-makerspace.herokuapp.com/auth";
 			String httpsURL = "http://" + ip_adress + "/auth";
+			System.out.println(httpsURL);
 			String query = "email=" + URLEncoder.encode(email,"UTF-8") + "&" + "password=" + URLEncoder.encode(password,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
@@ -60,23 +62,23 @@ public class LoginThread extends Thread {
 					mainFrame.loginFailed();
 				}
 			} else {
-				InformationDialog dialog = new InformationDialog();
+				ErrorDialog dialog = new ErrorDialog();
 				dialog.open("Oops! Ett fel uppstod. Felkod: " + con.getResponseCode() + "\n" + "(" + con.getResponseMessage() + ")");
 				mainFrame.loginFailed();
 			}
 		} catch (ConnectException e) {
 			System.out.println(e.getMessage());
-			InformationDialog dialog = new InformationDialog();
+			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n404: Not Found.");
 			mainFrame.loginFailed();
 		} catch (SocketTimeoutException e) {
 			System.out.println(e.getMessage());
-			InformationDialog dialog = new InformationDialog();
+			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n408: Timeout.");
 			mainFrame.loginFailed();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			InformationDialog dialog = new InformationDialog();
+			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Fel uppstod:\n" + e.getLocalizedMessage());
 			mainFrame.loginFailed();
 		}

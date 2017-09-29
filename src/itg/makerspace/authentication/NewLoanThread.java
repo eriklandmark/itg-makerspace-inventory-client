@@ -15,7 +15,7 @@ import itg.makerspace.dialogs.InformationDialog;
 public class NewLoanThread extends Thread {
 	
 	MainFrame mainFrame;
-	String ip_adress = "192.168.1.216:9292";
+	String ip_adress = "192.168.193.113:9292";
 	int user_id = 0;
 	String auth_key = "";
 	String items = "";
