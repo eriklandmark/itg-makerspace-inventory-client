@@ -20,21 +20,28 @@ public class ReturnItemThread extends Thread {
 	int loan_id;
 	MainFrame mainFrame;
 	int d_row;
+	String security_key;
+	int user_id;
 	
-	public ReturnItemThread(MainFrame main, int l_id, int id, int qu, int row) {
+	public ReturnItemThread(MainFrame main, String security_key, int user_id, int l_id, int id, int qu, int row) {
 		item_id = id;
 		quantity = qu;
 		loan_id = l_id;
 		mainFrame = main;
 		d_row = row;
+		this.security_key = security_key;
+		this.user_id = user_id;
 	}
 	
 	public void run() {
 		try {
-			//String httpsURL = "https://itg-makerspace.herokuapp.com/auth";
 			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/remove-loan-item";
 			System.out.println(httpsURL);
-			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8") + "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8");
+			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8")
+			+ "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")
+			+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8")
+			+ "&" + "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8")
+			+ "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
 			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
@@ -55,7 +62,12 @@ public class ReturnItemThread extends Thread {
 				in.close();
 				if(answer.equalsIgnoreCase("true")) {
 					System.out.println(answer);
-					mainFrame.myLoansPanel.tableContent.removeRow(d_row);
+					int old_quantity = (int) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 1);
+					if (old_quantity > quantity) {
+						mainFrame.myLoansPanel.tableContent.setValueAt(old_quantity - quantity, d_row, 1);
+					} else {
+						mainFrame.myLoansPanel.tableContent.removeRow(d_row);
+					}
 					mainFrame.myLoansPanel.updateTable();
 				} else {
 					InformationDialog dialog = new InformationDialog();

@@ -11,6 +11,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import itg.makerspace.dialogs.QuestionAction.ActionType;
 import itg.makerspace.panelelements.Button;
 
 import java.awt.GridBagLayout;
@@ -23,14 +24,16 @@ import javax.swing.JTextPane;
 import java.awt.Font;
 import java.awt.Color;
 
-public abstract class DefaultDialog extends JDialog {
+public class DefaultQuestionDialog extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextPane txtpnMessage;
-	public JButton okButton;
+	private JButton btnYes;
+	private JButton btnNo;
+	private QuestionAction action = null;
 
-	public DefaultDialog() {
+	public DefaultQuestionDialog() {
 		setBounds(0, 0, 450, 200);
 		setLocationRelativeTo(null);
 		setAlwaysOnTop(true);
@@ -42,15 +45,16 @@ public abstract class DefaultDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{193};
+		gbl_contentPanel.columnWidths = new int[]{200, 60, 20, 60, 200};
 		gbl_contentPanel.rowHeights = new int[]{111, 36};
-		gbl_contentPanel.columnWeights = new double[]{1.0};
+		gbl_contentPanel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 1.0};
 		gbl_contentPanel.rowWeights = new double[]{1.0, 0.0};
 		contentPanel.setLayout(gbl_contentPanel);
 		txtpnMessage = new JTextPane();
 		txtpnMessage.setEditable(false);
 		txtpnMessage.setFont(new Font("Open Sans", Font.PLAIN, 12));
 		GridBagConstraints gbc_txtpnMessage = new GridBagConstraints();
+		gbc_txtpnMessage.gridwidth = 5;
 		gbc_txtpnMessage.insets = new Insets(0, 0, 5, 0);
 		gbc_txtpnMessage.fill = GridBagConstraints.BOTH;
 		gbc_txtpnMessage.gridx = 0;
@@ -60,22 +64,44 @@ public abstract class DefaultDialog extends JDialog {
 		SimpleAttributeSet center_text = new SimpleAttributeSet();
 		StyleConstants.setAlignment(center_text, StyleConstants.ALIGN_CENTER);
 		doc.setParagraphAttributes(0, doc.getLength(), center_text, false);
-		okButton = new Button("OK");
-		GridBagConstraints center = new GridBagConstraints();
-		center.gridx = 0;
-		center.gridy = 1;
-		center.anchor = GridBagConstraints.CENTER;
-		contentPanel.add(okButton, center);
-		okButton.setActionCommand("OK");
-		okButton.requestFocusInWindow();
-		okButton.requestFocus();
-		getRootPane().setDefaultButton(okButton);
-		okButton.addActionListener(new ActionListener() {
+		
+		btnNo = new Button("NEJ");
+		GridBagConstraints gbc_btnNej = new GridBagConstraints();
+		gbc_btnNej.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnNej.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNej.gridx = 1;
+		gbc_btnNej.gridy = 1;
+		btnNo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (action != null) {
+					action.onAnswerEvent(ActionType.NO);
+				}
 				dispose();
 			}
 		});
+		contentPanel.add(btnNo, gbc_btnNej);
+		btnYes = new Button("JA");
+		GridBagConstraints center = new GridBagConstraints();
+		center.fill = GridBagConstraints.HORIZONTAL;
+		center.insets = new Insets(0, 0, 0, 5);
+		center.gridx = 3;
+		center.gridy = 1;
+		center.anchor = GridBagConstraints.CENTER;
+		btnYes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (action != null) {
+					action.onAnswerEvent(ActionType.YES);
+				}
+				dispose();
+			}
+		});
+		contentPanel.add(btnYes, center);
+	}
+	
+	public void setAction(QuestionAction action) {
+		this.action = action;
 	}
 	
 	public void open() {

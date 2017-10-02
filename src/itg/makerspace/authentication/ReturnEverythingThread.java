@@ -9,30 +9,28 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.json.JSONObject;
-
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
 
-public class GetAllLoansThread extends Thread {
+public class ReturnEverythingThread extends Thread {
 	
-	MainFrame mainFrame;
 	int user_id;
 	String security_key;
+	MainFrame mainFrame;
 	
-	public GetAllLoansThread(MainFrame m, int id, String sec_key) {
-		mainFrame = m;
-		user_id = id;
-		security_key = sec_key;
+	public ReturnEverythingThread(MainFrame main, String security_key, int u_id) {
+		user_id = u_id;
+		this.security_key = security_key;
+		mainFrame = main;
 	}
 	
 	public void run() {
 		try {
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/get-all-user-loans";
+			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/remove-all-loan-item";
 			System.out.println(httpsURL);
-			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&" + "security_key=" + URLEncoder.encode(security_key,"UTF-8");
-			
+			String query = "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8") + "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
+	
 			URL myurl = new URL(httpsURL);
 			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
@@ -50,37 +48,28 @@ public class GetAllLoansThread extends Thread {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
 				String answer = in.readLine();
 				in.close();
-				JSONObject obj = new JSONObject(answer);
-				String status = obj.getString("status");
-				if(status.equalsIgnoreCase("true")) {
-					System.out.println(answer);
-					mainFrame.getAllLoansSuccessfully(answer);
+				if(answer.equalsIgnoreCase("true")) {
+					mainFrame.myLoansPanel.emptyTable();
 				} else {
 					InformationDialog dialog = new InformationDialog();
-					dialog.open(obj.getString("status_msg"));
-					mainFrame.getAllLoansFails();
+					dialog.open("Error with request!");
 				}
 			} else {
 				ErrorDialog dialog = new ErrorDialog();
 				dialog.open("Oops! Ett fel uppstod. Felkod: " + con.getResponseCode() + "\n" + "(" + con.getResponseMessage() + ")");
-				mainFrame.getAllLoansFails();
 			}
 		} catch (ConnectException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n404: Not Found.");
-			mainFrame.getAllLoansFails();
 		} catch (SocketTimeoutException e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Servern kunde inte hittas!\n408: Timeout.");
-			mainFrame.getAllLoansFails();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			ErrorDialog dialog = new ErrorDialog();
-			dialog.open(e.getLocalizedMessage());
-			mainFrame.getAllLoansFails();
-			e.printStackTrace();
+			dialog.open("Fel uppstod:\n" + e.getLocalizedMessage());
 		}
     }
 }

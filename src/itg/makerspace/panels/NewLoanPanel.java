@@ -133,7 +133,6 @@ public class NewLoanPanel extends JPanel {
 			}
 		});
 		
-
 		btnAddBarcode = new Button("L\u00E4gg Till");
 		
 		ImageIcon loading = new ImageIcon(MainFrame.HOME_DIRECTORY + "/resources/loading.gif");
