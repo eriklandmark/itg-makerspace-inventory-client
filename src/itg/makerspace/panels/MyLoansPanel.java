@@ -70,7 +70,7 @@ public class MyLoansPanel extends JPanel {
 		gbc_lblAntalAttLmna.gridy = 1;
 		add(lblSpinner, gbc_lblAntalAttLmna);
 
-		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(1, 1, 100, 1);
+		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(1, 1, 1000, 1);
 		spinner = new JSpinner(spinnerModel);
 		spinner.setEditor(new JSpinner.NumberEditor(spinner,"###"));
 		spinner.setFont(new Font("Open Sans", Font.PLAIN, 14));
