@@ -27,19 +27,22 @@ public class Table extends JTable {
 		super(tableContent);
 		mainFrame = main;
 		
-		getColumnModel().getColumn(1).setMaxWidth(120);
+		getColumnModel().getColumn(0).setMaxWidth(180);
+		getColumnModel().getColumn(0).setWidth(180);
+		getColumnModel().getColumn(0).setMinWidth(180);
+		getColumnModel().getColumn(2).setMaxWidth(120);
 		setBackground(Color.WHITE);
 		setOpaque(false);
 		getTableHeader().setBackground(Color.WHITE);
 		setShowGrid(false);
-		removeColumn(getColumnModel().getColumn(3));
-		removeColumn(getColumnModel().getColumn(3));
+		removeColumn(getColumnModel().getColumn(4));
+		removeColumn(getColumnModel().getColumn(4));
 		
 		getTableHeader().setBorder(BorderFactory.createEmptyBorder());
 		getTableHeader().setBackground(new Color(229, 229, 229));
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		getColumnModel().getColumn(1).setCellRenderer( centerRenderer );
+		getColumnModel().getColumn(2).setCellRenderer( centerRenderer );
 		setFont(new Font("Open Sans", Font.PLAIN, 16));
 		getTableHeader().setFont(new Font("Open Sans", Font.PLAIN, 18));
 		setRowHeight(40);
@@ -51,12 +54,12 @@ public class Table extends JTable {
 		
 		TableButton buttonEditor = new TableButton("Lämna Tillbaka");
 		
-		getColumnModel().getColumn(2).setMaxWidth(150);
-		getColumnModel().getColumn(2).setWidth(150);
-		getColumnModel().getColumn(2).setMinWidth(150);
-		getColumnModel().getColumn(2).setCellEditor(buttonEditor);
-		getColumnModel().getColumn(2).setCellRenderer(buttonEditor);
-		getColumnModel().getColumn(2).setModelIndex(2);
+		getColumnModel().getColumn(3).setMaxWidth(150);
+		getColumnModel().getColumn(3).setWidth(150);
+		getColumnModel().getColumn(3).setMinWidth(150);
+		getColumnModel().getColumn(3).setCellEditor(buttonEditor);
+		getColumnModel().getColumn(3).setCellRenderer(buttonEditor);
+		getColumnModel().getColumn(3).setModelIndex(2);
 		
 		for (int i = 0; i < getTableHeader().getColumnModel().getColumnCount(); i++) {
 			getTableHeader().getColumnModel().getColumn(i).setHeaderRenderer(new TableCellRenderer() {
@@ -77,8 +80,8 @@ public class Table extends JTable {
 				
 				int row = instance.rowAtPoint(e.getPoint());
 				int col = instance.columnAtPoint(e.getPoint());
-				if (row >= 0 && col == 2) {
-					ReturnItemThread returnItemThread = new ReturnItemThread(mainFrame, mainFrame.currentUser.security_key, mainFrame.currentUser.user_id, ((int)tableContent.getValueAt(row, 4)), ((int)tableContent.getValueAt(row, 3)), (int)mainFrame.myLoansPanel.spinner.getValue(), row);
+				if (row >= 0 && col == 3) {
+					ReturnItemThread returnItemThread = new ReturnItemThread(mainFrame, mainFrame.currentUser.security_key, mainFrame.currentUser.user_id, ((int)tableContent.getValueAt(row, 5)), ((int)tableContent.getValueAt(row, 4)), (int)mainFrame.myLoansPanel.spinner.getValue(), row);
 					returnItemThread.start();
 				}
 			}

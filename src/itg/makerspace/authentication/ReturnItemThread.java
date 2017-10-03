@@ -62,10 +62,17 @@ public class ReturnItemThread extends Thread {
 				in.close();
 				if(answer.equalsIgnoreCase("true")) {
 					System.out.println(answer);
-					int old_quantity = (int) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 1);
+					int old_quantity = (int) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 2);
 					if (old_quantity > quantity) {
-						mainFrame.myLoansPanel.tableContent.setValueAt(old_quantity - quantity, d_row, 1);
+						mainFrame.myLoansPanel.tableContent.setValueAt(old_quantity - quantity, d_row, 2);
 					} else {
+						if (mainFrame.myLoansPanel.tableContent.getRowCount() > 1) {
+							String date = (String) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 0);
+							String date_below = (String) mainFrame.myLoansPanel.tableContent.getValueAt(d_row + 1, 0);
+							if(!date.isEmpty() && date_below.isEmpty()) {
+								mainFrame.myLoansPanel.tableContent.setValueAt(date, d_row + 1, 0);
+							}
+						}
 						mainFrame.myLoansPanel.tableContent.removeRow(d_row);
 					}
 					mainFrame.myLoansPanel.updateTable();

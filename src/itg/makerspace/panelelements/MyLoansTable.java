@@ -6,7 +6,7 @@ public class MyLoansTable extends DefaultTableModel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static String[] columnNames = {"Namn", "Antal", "Lämna tillbaks?", "ITEM_ID", "LOAN_ID"};
+	private static String[] columnNames = {"Datum", "Namn", "Antal", "Lämna tillbaks?", "ITEM_ID", "LOAN_ID"};
 	
 	public MyLoansTable() {
 		super(columnNames, 0);

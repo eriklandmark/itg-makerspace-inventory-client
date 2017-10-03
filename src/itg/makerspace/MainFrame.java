@@ -276,11 +276,17 @@ public class MainFrame extends JFrame {
 	public void getAllLoansSuccessfully(String response) {
 		JSONObject json = new JSONObject(response);
 		JSONArray items = json.getJSONArray("items");
+		int latestLoan = 0;
 		
 		for (int i = 0; i < items.length(); i++) {
 			JSONObject loan = items.getJSONObject(i);
 			int id = loan.getInt("item_id");
-			Object[] obj = new Object[] {inventory.getItemFromID(id).name, loan.getInt("quantity"), "", id, loan.getInt("loan_id")};
+			int loan_id = loan.getInt("loan_id");
+			Object[] obj = new Object[] {"", inventory.getItemFromID(id).name, loan.getInt("quantity"), "", id, loan_id};
+			if (loan_id != latestLoan) {
+				obj[0] = loan.getString("date_loaned").replace("_","  ");
+				latestLoan = loan_id;
+			}
 			myLoansPanel.tableContent.addRow(obj);
 		}
 		
