@@ -9,6 +9,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.json.JSONObject;
 
 import itg.makerspace.MainFrame;
@@ -29,12 +31,12 @@ public class GetAllLoansThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/get-all-user-loans";
+			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/get-all-user-loans";
 			System.out.println(httpsURL);
 			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&" + "security_key=" + URLEncoder.encode(security_key,"UTF-8");
 			
 			URL myurl = new URL(httpsURL);
-			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
+			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(5000);
 			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
@@ -47,7 +49,7 @@ public class GetAllLoansThread extends Thread {
 			output.close();
 			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
 				JSONObject obj = new JSONObject(answer);

@@ -9,6 +9,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
@@ -27,12 +29,12 @@ public class ReturnEverythingThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/remove-all-loan-item";
+			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/remove-all-loan-item";
 			System.out.println(httpsURL);
 			String query = "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8") + "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
-			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
+			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(5000);
 			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
@@ -45,7 +47,7 @@ public class ReturnEverythingThread extends Thread {
 			output.close();
 			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
 				if(answer.equalsIgnoreCase("true")) {

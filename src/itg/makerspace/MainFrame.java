@@ -75,9 +75,11 @@ public class MainFrame extends JFrame {
 		loginPanel.btnLogin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				loginPanel.lblLoadingIcon.setVisible(true);
-				loginPanel.btnLogin.setEnabled(false);
-				authManager.login(instance, "erik.landmark@live.se", "Fredo112");
+				if (!(loginPanel.emailField.getText() == "" || String.valueOf(loginPanel.passwordField.getPassword()) == "")) {
+					loginPanel.lblLoadingIcon.setVisible(true);
+					loginPanel.btnLogin.setEnabled(false);
+					authManager.login(instance, loginPanel.emailField.getText(), String.valueOf(loginPanel.passwordField.getPassword()));
+				}
 			}
 		});
 		
@@ -186,7 +188,7 @@ public class MainFrame extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 					loginPanel.lblLoadingIcon.setVisible(true);
-					authManager.login(instance, "erik.landmark@live.se", "Fredo112");
+					authManager.login(instance, loginPanel.emailField.getText(), String.valueOf(loginPanel.passwordField.getPassword()));
 				}
 			}
 			

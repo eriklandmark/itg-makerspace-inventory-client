@@ -9,6 +9,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.InformationDialog;
 
@@ -28,12 +30,11 @@ public class NewLoanThread extends Thread {
 	
 	public void run() {
 		try {
-			//String httpsURL = "https://itg-makerspace.herokuapp.com/new-loan";
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/new-loan";
+			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/new-loan";
 			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id), "UTF-8") + "&security_key=" + URLEncoder.encode(auth_key,"UTF-8") + "&items=" + URLEncoder.encode(items,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
-			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
+			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(5000);
 			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
@@ -46,7 +47,7 @@ public class NewLoanThread extends Thread {
 			output.close();
 			
 			if(con.getResponseCode() == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
 				System.out.println(answer);

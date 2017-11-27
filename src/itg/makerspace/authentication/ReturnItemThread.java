@@ -4,10 +4,13 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.json.JSONObject;
 
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
@@ -35,16 +38,17 @@ public class ReturnItemThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "http://" + AuthenticationManager.IP_ADRESS + "/remove-loan-item";
+			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/remove-loan-item";
 			System.out.println(httpsURL);
 			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8")
 			+ "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")
 			+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8")
 			+ "&" + "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8")
-			+ "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
+			+ "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8")
+			+ "&" + "origin=" + URLEncoder.encode("2","UTF-8");
 	
 			URL myurl = new URL(httpsURL);
-			HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
+			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
 			con.setRequestMethod("POST");
 			con.setConnectTimeout(5000);
 			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
@@ -57,10 +61,11 @@ public class ReturnItemThread extends Thread {
 			output.close();
 			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); 
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
-				if(answer.equalsIgnoreCase("true")) {
+				JSONObject jsonObj = new JSONObject(answer);
+				if(jsonObj.getString("status").equalsIgnoreCase("true")) {
 					System.out.println(answer);
 					int old_quantity = (int) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 2);
 					if (old_quantity > quantity) {

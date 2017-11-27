@@ -41,8 +41,9 @@ public class Table extends JTable {
 		getTableHeader().setBorder(BorderFactory.createEmptyBorder());
 		getTableHeader().setBackground(new Color(229, 229, 229));
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		getColumnModel().getColumn(2).setCellRenderer( centerRenderer );
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+		getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+		getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		setFont(new Font("Open Sans", Font.PLAIN, 16));
 		getTableHeader().setFont(new Font("Open Sans", Font.PLAIN, 18));
 		setRowHeight(40);
