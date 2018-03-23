@@ -11,6 +11,8 @@ import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.json.JSONObject;
+
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.InformationDialog;
 
@@ -30,7 +32,7 @@ public class NewLoanThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/new-loan";
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/new";
 			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id), "UTF-8") + "&security_key=" + URLEncoder.encode(auth_key,"UTF-8") + "&items=" + URLEncoder.encode(items,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
@@ -50,12 +52,13 @@ public class NewLoanThread extends Thread {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
-				System.out.println(answer);
-				if (answer.equalsIgnoreCase("true")) {
+				JSONObject obj = new JSONObject(answer);
+				String status = obj.getString("status");
+				if(status.equalsIgnoreCase("true")) {
 					mainFrame.newLoanSuccessfull();
 				} else {
 					InformationDialog dialog = new InformationDialog();
-					dialog.open("Oops! Ett fel uppstod.\n" + "(" + con.getResponseMessage() + ")");
+					dialog.open(obj.getString("status_msg"));
 					mainFrame.newLoanFail();
 				}
 			} else {

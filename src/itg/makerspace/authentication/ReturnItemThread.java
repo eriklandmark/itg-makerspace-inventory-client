@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -38,8 +39,8 @@ public class ReturnItemThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/remove-loan-item";
-			System.out.println(httpsURL);
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/delete";
+			
 			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8")
 			+ "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")
 			+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8")
@@ -99,6 +100,7 @@ public class ReturnItemThread extends Thread {
 			dialog.open("Servern kunde inte hittas!\n408: Timeout.");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog();
 			dialog.open("Fel uppstod:\n" + e.getLocalizedMessage());
 		}

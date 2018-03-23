@@ -8,6 +8,7 @@ public class InventoryItem {
 	public int quantity = 0;
 	public String barcode = "";
 	public int category = 0;
+	public String categoryName = "";
 	
 	@Override
 	public String toString() {

@@ -7,6 +7,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -31,18 +32,18 @@ public class GetAllLoansThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/get-all-user-loans";
-			System.out.println(httpsURL);
-			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&" + "security_key=" + URLEncoder.encode(security_key,"UTF-8");
+			String url = AuthenticationManager.IP_ADRESS + "/loans";
+			System.out.println(url);
+			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&security_key=" + URLEncoder.encode(security_key,"UTF-8") + "&origin=2";
 			
-			URL myurl = new URL(httpsURL);
+			URL myurl = new URL(url);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
-			con.setRequestMethod("POST");
+			con.setRequestMethod("GET");
 			con.setConnectTimeout(5000);
 			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
 			con.setRequestProperty("Content-Type","application/x-www-form-urlencoded"); 
 			con.setDoOutput(true); 
-			con.setDoInput(true); 
+			con.setDoInput(true);
 	
 			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
 			output.writeBytes(query);

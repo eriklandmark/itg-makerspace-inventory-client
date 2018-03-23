@@ -14,8 +14,8 @@ import org.json.JSONObject;
 
 import itg.makerspace.authentication.AuthenticationManager;
 import itg.makerspace.authentication.GetAllLoansThread;
+import itg.makerspace.authentication.ItemFromBarcodeThread;
 import itg.makerspace.dialogs.InformationDialog;
-import itg.makerspace.inventory.Inventory;
 import itg.makerspace.inventory.InventoryItem;
 import itg.makerspace.log.Logger;
 import itg.makerspace.panels.ActionPanel;
@@ -33,7 +33,6 @@ public class MainFrame extends JFrame {
 	public NewLoanPanel newLoanPanel;
 	public MyLoansPanel myLoansPanel;
 	public Scanner scanner;
-	public Inventory inventory = new Inventory();
 	public Logger logger;
 	public AuthenticationManager authManager;
 	public static String OS = System.getProperty("os.name");
@@ -60,7 +59,6 @@ public class MainFrame extends JFrame {
 		}
 		authManager = new AuthenticationManager();
 		scanner = new Scanner(this);
-		inventory.loadInventoryFromDB();
 		logger = new Logger(this);
 		loginPanel = new LoginPanel(this);
 		actionPanel = new ActionPanel();
@@ -130,7 +128,9 @@ public class MainFrame extends JFrame {
 			public void keyTyped(KeyEvent e) {
 				if(e.getKeyChar() == KeyEvent.VK_ENTER) {
 					if(getContentPane().getName() == "newLoanPanel" && newLoanPanel.textBarcodeInput.getText().length() > 0 && !newLoanPanel.textBarcodeInput.textIsPlaceHolder()) {
-						InventoryItem item = inventory.getItemFromBarcode(newLoanPanel.textBarcodeInput.getText());
+						ItemFromBarcodeThread barcodeRequest = new ItemFromBarcodeThread(instance, newLoanPanel.textBarcodeInput.getText());
+						barcodeRequest.run();
+						InventoryItem item = barcodeRequest.getItem();	
 						if (item != null) {
 							boolean hasItem = false;
 							for(int i = 0; i < newLoanPanel.tableContent.getRowCount(); i++) {
@@ -160,7 +160,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(getContentPane().getName() == "newLoanPanel" && newLoanPanel.textBarcodeInput.getText().length() > 0 && !newLoanPanel.textBarcodeInput.textIsPlaceHolder()) {
-					InventoryItem item = inventory.getItemFromBarcode(newLoanPanel.textBarcodeInput.getText());
+					ItemFromBarcodeThread barcodeRequest = new ItemFromBarcodeThread(instance, newLoanPanel.textBarcodeInput.getText());
+					barcodeRequest.run();
+					InventoryItem item = barcodeRequest.getItem();	
 					if (item != null) {
 						boolean hasItem = false;
 						for(int i = 0; i < newLoanPanel.tableContent.getRowCount(); i++) {
@@ -284,7 +286,8 @@ public class MainFrame extends JFrame {
 			JSONObject loan = items.getJSONObject(i);
 			int id = loan.getInt("item_id");
 			int loan_id = loan.getInt("loan_id");
-			Object[] obj = new Object[] {"", inventory.getItemFromID(id).name, loan.getInt("quantity"), "", id, loan_id};
+			System.out.println(loan.toString());
+			Object[] obj = new Object[] {"", loan.getString("item_name"), loan.getInt("quantity"), "", id, loan_id};
 			if (loan_id != latestLoan) {
 				obj[0] = loan.getString("date_loaned").replace("_","  ");
 				latestLoan = loan_id;
@@ -308,7 +311,9 @@ public class MainFrame extends JFrame {
 		requestFocus();
 		requestFocusInWindow();
 		if(getContentPane().getName() == "newLoanPanel") {
-			InventoryItem item = inventory.getItemFromBarcode(barcode);
+			ItemFromBarcodeThread barcodeRequest = new ItemFromBarcodeThread(instance, newLoanPanel.textBarcodeInput.getText());
+			barcodeRequest.run();
+			InventoryItem item = barcodeRequest.getItem();	
 			if (item != null) {
 				boolean hasItem = false;
 				for(int i = 0; i < newLoanPanel.tableContent.getRowCount(); i++) {

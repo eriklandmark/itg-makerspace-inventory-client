@@ -16,23 +16,23 @@ import org.json.JSONObject;
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
+import itg.makerspace.inventory.InventoryItem;
 
-public class LoginThread extends Thread {
+public class ItemFromBarcodeThread extends Thread {
 	
 	MainFrame mainFrame;
-	String email = "";
-	String password = "";
+	String barcode = "";
+	private InventoryItem item = null;
 	
-	public LoginThread(MainFrame main, String em, String pw) {
+	public ItemFromBarcodeThread(MainFrame main, String bc) {
 		mainFrame = main;
-		email = em;
-		password = pw;
+		barcode = bc;
 	}
 
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/auth";
-			String query = "email=" + URLEncoder.encode(email,"UTF-8") + "&" + "password=" + URLEncoder.encode(password,"UTF-8");
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/get-item-from-barcode";
+			String query = "barcode=" + URLEncoder.encode(barcode,"UTF-8") + "&origin=2";
 	
 			URL myurl = new URL(httpsURL);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
@@ -54,7 +54,13 @@ public class LoginThread extends Thread {
 				JSONObject obj = new JSONObject(answer);
 				String status = obj.getString("status");
 				if(status.equalsIgnoreCase("true")) {
-					mainFrame.loginSuccessfull(answer);
+					JSONObject requestItem = obj.getJSONObject("item");
+					System.out.println(obj.getJSONObject("item").toString());
+					item = new InventoryItem();
+					item.barcode = barcode;
+					item.name = requestItem.getString("name");
+					item.id = requestItem.getInt("id");
+					item.quantity = requestItem.getInt("quantity");
 				} else {
 					InformationDialog dialog = new InformationDialog();
 					dialog.open(obj.getString("status_msg"));
@@ -82,4 +88,8 @@ public class LoginThread extends Thread {
 			mainFrame.loginFailed();
 		}
     }
+	
+	public InventoryItem getItem() {
+		return item;
+	}
 }

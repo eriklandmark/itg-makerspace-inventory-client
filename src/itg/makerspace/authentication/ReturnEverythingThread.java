@@ -11,6 +11,8 @@ import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.json.JSONObject;
+
 import itg.makerspace.MainFrame;
 import itg.makerspace.dialogs.ErrorDialog;
 import itg.makerspace.dialogs.InformationDialog;
@@ -29,7 +31,7 @@ public class ReturnEverythingThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = "https://" + AuthenticationManager.IP_ADRESS + "/remove-all-loan-item";
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/delete-all";
 			System.out.println(httpsURL);
 			String query = "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8") + "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
 	
@@ -50,11 +52,13 @@ public class ReturnEverythingThread extends Thread {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
-				if(answer.equalsIgnoreCase("true")) {
+				JSONObject obj = new JSONObject(answer);
+				String status = obj.getString("status");
+				if(status.equalsIgnoreCase("true")) {
 					mainFrame.myLoansPanel.emptyTable();
 				} else {
 					InformationDialog dialog = new InformationDialog();
-					dialog.open("Error with request!");
+					dialog.open(obj.getString("status_msg"));
 				}
 			} else {
 				ErrorDialog dialog = new ErrorDialog();
