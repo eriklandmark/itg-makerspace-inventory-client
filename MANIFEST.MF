@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
 Main-Class: itg.makerspace.MainFrame
-Class-Path: lib/json-20170516.jar lib/miglayout15-swing.jar lib/sqlite-jdbc-3.20.0.jar
+Class-Path: lib/json-20170516.jar lib/miglayout15-swing.jar

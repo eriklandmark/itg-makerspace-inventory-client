@@ -32,23 +32,15 @@ public class GetAllLoansThread extends Thread {
 	
 	public void run() {
 		try {
-			String url = AuthenticationManager.IP_ADRESS + "/loans";
-			System.out.println(url);
-			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "&security_key=" + URLEncoder.encode(security_key,"UTF-8") + "&origin=2";
-			
+			String url = AuthenticationManager.IP_ADRESS + "/users/"+ URLEncoder.encode(String.valueOf(user_id),"UTF-8") + "/loans?security_key=" + URLEncoder.encode(security_key,"UTF-8") + "&origin=2";
 			URL myurl = new URL(url);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
 			con.setRequestMethod("GET");
 			con.setConnectTimeout(5000);
-			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
 			con.setRequestProperty("Content-Type","application/x-www-form-urlencoded"); 
 			con.setDoOutput(true); 
 			con.setDoInput(true);
 	
-			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
-			output.writeBytes(query);
-			output.close();
-			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
@@ -56,7 +48,6 @@ public class GetAllLoansThread extends Thread {
 				JSONObject obj = new JSONObject(answer);
 				String status = obj.getString("status");
 				if(status.equalsIgnoreCase("true")) {
-					System.out.println(answer);
 					mainFrame.getAllLoansSuccessfully(answer);
 				} else {
 					InformationDialog dialog = new InformationDialog();

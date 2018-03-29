@@ -31,9 +31,8 @@ public class ReturnEverythingThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/delete-all";
-			System.out.println(httpsURL);
-			String query = "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8") + "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8");
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/users/"+ String.valueOf(user_id) + "/loans/delete-all";
+			String query = "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
@@ -47,7 +46,7 @@ public class ReturnEverythingThread extends Thread {
 			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
 			output.writeBytes(query);
 			output.close();
-			System.out.println(con.getResponseCode());
+			
 			if(con.getResponseCode() == 200) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();

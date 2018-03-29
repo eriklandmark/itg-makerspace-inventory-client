@@ -31,8 +31,8 @@ public class LoginThread extends Thread {
 
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/auth";
-			String query = "email=" + URLEncoder.encode(email,"UTF-8") + "&" + "password=" + URLEncoder.encode(password,"UTF-8");
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/api/user-authentication";
+			String query = "user_email=" + URLEncoder.encode(email,"UTF-8") + "&" + "user_password=" + URLEncoder.encode(password,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
@@ -46,7 +46,6 @@ public class LoginThread extends Thread {
 			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
 			output.writeBytes(query);
 			output.close();
-			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();

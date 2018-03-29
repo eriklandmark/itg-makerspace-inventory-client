@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -32,8 +31,8 @@ public class NewLoanThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/new";
-			String query = "user_id=" + URLEncoder.encode(String.valueOf(user_id), "UTF-8") + "&security_key=" + URLEncoder.encode(auth_key,"UTF-8") + "&items=" + URLEncoder.encode(items,"UTF-8");
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/users/" + String.valueOf(user_id) + "/loans/new";
+			String query = "security_key=" + URLEncoder.encode(auth_key,"UTF-8") + "&items=" + URLEncoder.encode(items,"UTF-8");
 	
 			URL myurl = new URL(httpsURL);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();

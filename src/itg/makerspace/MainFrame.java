@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 
 import javax.swing.JFrame;
 
@@ -35,7 +34,6 @@ public class MainFrame extends JFrame {
 	public Scanner scanner;
 	public Logger logger;
 	public AuthenticationManager authManager;
-	public static String OS = System.getProperty("os.name");
 	public static String HOME_DIRECTORY = "";
 	
 	public static void main(String[] args) {
@@ -52,11 +50,8 @@ public class MainFrame extends JFrame {
 	}
 	
 	public MainFrame() {
-		if (MainFrame.OS.startsWith("Mac")) {
-			HOME_DIRECTORY = "/Library/Application Support/itg-makerspace-inventory-client";
-		} else if (MainFrame.OS.startsWith("Windows")) {
-			HOME_DIRECTORY = System.getenv("APPDATA") + File.separator + "itg-makerspace-inventory-client";
-		}
+		HOME_DIRECTORY = System.getProperty("user.dir");
+		System.out.println(HOME_DIRECTORY);
 		authManager = new AuthenticationManager();
 		scanner = new Scanner(this);
 		logger = new Logger(this);
@@ -213,13 +208,11 @@ public class MainFrame extends JFrame {
 					
 					for(int i = 0; i < newLoanPanel.tableContent.getRowCount(); i++) {
 						JSONObject item = new JSONObject();
-						item.put("item", ((String)newLoanPanel.tableContent.getValueAt(i, 0)).substring(2));
 						item.put("quantity", newLoanPanel.tableContent.getValueAt(i, 1));
 						item.put("item_id", newLoanPanel.tableContent.getValueAt(i, 3));
 						items.put(item);
 					}
 					
-					System.out.println(items.toString());
 					authManager.sendNewLoan(instance, currentUser.user_id, currentUser.security_key, items.toString());
 				} else {
 					InformationDialog dialog = new InformationDialog();
@@ -241,7 +234,6 @@ public class MainFrame extends JFrame {
 	
 	public void loginSuccessfull(String response) {
 		JSONObject obj = new JSONObject(response);
-		System.out.println(response);
 		currentUser = new User(obj.getString("email"), obj.getString("name"), obj.getInt("user_id"), obj.getString("security_key"));
 		actionPanel.setGreetingText("Välkommen " + currentUser.fullName + "!");
 		setContentPane(actionPanel);
@@ -286,7 +278,6 @@ public class MainFrame extends JFrame {
 			JSONObject loan = items.getJSONObject(i);
 			int id = loan.getInt("item_id");
 			int loan_id = loan.getInt("loan_id");
-			System.out.println(loan.toString());
 			Object[] obj = new Object[] {"", loan.getString("item_name"), loan.getInt("quantity"), "", id, loan_id};
 			if (loan_id != latestLoan) {
 				obj[0] = loan.getString("date_loaned").replace("_","  ");
@@ -311,7 +302,7 @@ public class MainFrame extends JFrame {
 		requestFocus();
 		requestFocusInWindow();
 		if(getContentPane().getName() == "newLoanPanel") {
-			ItemFromBarcodeThread barcodeRequest = new ItemFromBarcodeThread(instance, newLoanPanel.textBarcodeInput.getText());
+			ItemFromBarcodeThread barcodeRequest = new ItemFromBarcodeThread(instance, barcode);
 			barcodeRequest.run();
 			InventoryItem item = barcodeRequest.getItem();	
 			if (item != null) {

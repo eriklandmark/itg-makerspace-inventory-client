@@ -39,13 +39,12 @@ public class ReturnItemThread extends Thread {
 	
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/loans/delete";
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/users/" + String.valueOf(user_id) + "/loans/delete";
 			
 			String query = "loan_id=" + URLEncoder.encode(String.valueOf(loan_id),"UTF-8")
 			+ "&" + "item_id=" + URLEncoder.encode(String.valueOf(item_id),"UTF-8")
 			+ "&" + "quantity=" + URLEncoder.encode(String.valueOf(quantity),"UTF-8")
 			+ "&" + "security_key=" + URLEncoder.encode(String.valueOf(security_key),"UTF-8")
-			+ "&" + "user_id=" + URLEncoder.encode(String.valueOf(user_id),"UTF-8")
 			+ "&" + "origin=" + URLEncoder.encode("2","UTF-8");
 	
 			URL myurl = new URL(httpsURL);
@@ -60,14 +59,12 @@ public class ReturnItemThread extends Thread {
 			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
 			output.writeBytes(query);
 			output.close();
-			System.out.println(con.getResponseCode());
 			if(con.getResponseCode() == 200) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
 				in.close();
 				JSONObject jsonObj = new JSONObject(answer);
 				if(jsonObj.getString("status").equalsIgnoreCase("true")) {
-					System.out.println(answer);
 					int old_quantity = (int) mainFrame.myLoansPanel.tableContent.getValueAt(d_row, 2);
 					if (old_quantity > quantity) {
 						mainFrame.myLoansPanel.tableContent.setValueAt(old_quantity - quantity, d_row, 2);

@@ -31,22 +31,15 @@ public class ItemFromBarcodeThread extends Thread {
 
 	public void run() {
 		try {
-			String httpsURL = AuthenticationManager.IP_ADRESS + "/get-item-from-barcode";
-			String query = "barcode=" + URLEncoder.encode(barcode,"UTF-8") + "&origin=2";
+			String httpsURL = AuthenticationManager.IP_ADRESS + "/inventory/b-" + barcode.toString() + "?origin=2";
 	
 			URL myurl = new URL(httpsURL);
 			HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
-			con.setRequestMethod("POST");
+			con.setRequestMethod("GET");
 			con.setConnectTimeout(5000);
-			con.setRequestProperty("Content-length", String.valueOf(query.length())); 
 			con.setRequestProperty("Content-Type","application/x-www-form-urlencoded"); 
-			con.setDoOutput(true); 
-			con.setDoInput(true); 
-	
-			DataOutputStream output = new DataOutputStream(con.getOutputStream());  
-			output.writeBytes(query);
-			output.close();
-			System.out.println(con.getResponseCode());
+			con.setDoOutput(true);
+			con.setDoInput(true);
 			if(con.getResponseCode() == 200) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8")); 
 				String answer = in.readLine();
@@ -55,7 +48,6 @@ public class ItemFromBarcodeThread extends Thread {
 				String status = obj.getString("status");
 				if(status.equalsIgnoreCase("true")) {
 					JSONObject requestItem = obj.getJSONObject("item");
-					System.out.println(obj.getJSONObject("item").toString());
 					item = new InventoryItem();
 					item.barcode = barcode;
 					item.name = requestItem.getString("name");
